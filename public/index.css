@@ -226,6 +226,7 @@ body {
     gap: 20px; /* Adjust the gap between the cards as needed */
     margin-bottom: 20px;
 
+
 }
 
 .weather-card {
@@ -281,6 +282,13 @@ body {
     grid-column: 1;
     grid-row: 1;
     flex: 1;
+}
+
+.weather-card {
+    background-image: url('./png/weatherwarm.png');
+    background-position: center;
+    background-repeat: no-repeat;
+
 }
 
 .weather-details {
@@ -705,28 +713,41 @@ box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 .leftbotafont{
     color: white;
 }
-.bgleftbota
-{
-    background-image: url('./png/Town.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;  /* ป้องกันการซ้ำ */
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    color: white;
-    flex-basis: 60%;
-    width: 100%;  /* ขยายเต็ม container */
-    height: 100%; /* ป้องกัน background ไม่เต็ม */
-    min-height: 200px; /* ป้องกันไม่ให้ block หดเกินไป */
+
+.background-text-building{
+    display: flex;
+    
+    padding: 12px;
+    width: 100%;
+    justify-content: center;
+align-content: center;
+}
+.text-building{
+    background-color: #f0f4f8;
+    border-radius: 60px;
+    width: 200px;
+    text-align: center;
+    padding: 10px;
+    margin-bottom: 50px;
 }
 .leftbota{
 flex: 1;
+width: 100%;
 min-width: 300px;
-height: 65%;
+min-height: 200px; /* ป้องกันไม่ให้ block หดเกินไป */
+
+height: 60%;
 border-radius: 10px;
 background: #ffffff;
 box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);   
 margin-bottom: 20px;
+background-image: url('./png/Town.png');
+background-size: cover;
+background-position: center;
+background-repeat: no-repeat;  /* ป้องกันการซ้ำ */
+justify-content: center;
+align-content: center;
+
 }
 
 /* กล่องซ้ายล่าง */
@@ -896,7 +917,74 @@ max-width: calc(33% - 10px);
     align-items: center;
     margin-top: 100px;
   }
+  
+  .graph {
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding-top: 30px;
+    justify-content: center;
+}
 
+  
+  .forecast-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+  }
+  
+  .forecast-item {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: 0.3s;
+  }
+  
+  .forecast-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+  }
+  
+  .forecast-item img {
+    width: 50px;
+    margin: 10px 0;
+  }
+  
+  .forecast-item span {
+    display: block;
+    margin-top: 8px;
+    font-size: 1rem;
+  }
+  
+  .forecast-item strong {
+    color: #0077cc;
+  }
+  
+  .chart-section {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    max-width: 1500px; /* ลองกำหนดขนาดที่เหมาะสม */
+  width: 100%;
+
+  }
+ 
+  
+  canvas {
+    width: 100% !important;
+    height: 100% !important;
+    margin-top: 10px;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    margin-bottom: 50px;
+  }
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -1033,7 +1121,7 @@ max-width: calc(33% - 10px);
       width: 40px; /* รูปขนาดเท่ากัน */
       height: 40px;
     }
-
+    
     
 
 }
