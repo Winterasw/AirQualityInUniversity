@@ -90,7 +90,7 @@ export async function LoadForecast() {
   if (!fc) return;
 
   const data = await getNext5DaysForecast();
-  fc.innerHTML = "";
+  let forecastHTML = ""; // เก็บ HTML ไว้ในตัวแปร
 
   data.forEach(({ date, forecast, rainChance }) => {
     const dayLabel = getDayLabel(date);
@@ -101,7 +101,7 @@ export async function LoadForecast() {
       const icon = forecast.icon || pickIcon({ temperature: temp, rainChance });
       const rainPct = rainChance ?? 0;
 
-      fc.innerHTML += `
+      forecastHTML += `
         <div class="forecast-item">
           <span><strong>${dayLabel}</strong></span>
           <img src="./png/${icon}.png" alt="${icon}" />
@@ -110,7 +110,7 @@ export async function LoadForecast() {
           <span>Rain: <strong>${rainPct}</strong>%</span>
         </div>`;
     } else {
-      fc.innerHTML += `
+      forecastHTML += `
         <div class="forecast-item">
           <span><strong>${dayLabel}</strong></span>
           <img src="./png/unknown.png" alt="No Data" />
@@ -120,7 +120,10 @@ export async function LoadForecast() {
         </div>`;
     }
   });
+
+  fc.innerHTML = forecastHTML; // แทรก HTML ทั้งหมดในครั้งเดียว
 }
+
 function afterLoadForecast() {
   const items = document.querySelectorAll("#forecastContainer .forecast-item");
 
@@ -129,36 +132,36 @@ function afterLoadForecast() {
   const pm25s = [];
 
   items.forEach((item) => {
-    const dayLabel = item.querySelector("span strong")?.innerText || "";
+    const strongs = item.querySelectorAll("strong");
+
+    // เช็กว่ามี strong ครบก่อน
+    const dayLabel = strongs[0]?.innerText || "";
+    const tempValue = parseFloat(strongs[1]?.innerText || "0");
+    const pm25Value = parseFloat(strongs[2]?.innerText || "0");
+
     labels.push(dayLabel);
-
-    const tempText = item.querySelectorAll("span")[1]?.innerText || "0°C";
-    const tempValue = parseFloat(tempText.replace("°C", ""));
     temps.push(tempValue);
-
-    const pm25Text =
-      item.querySelectorAll("span")[2]?.innerText || "PM2.5: 0 µg/m³";
-    const pm25Value = parseFloat(
-      pm25Text.replace("PM2.5: ", "").replace("µg/m³", "")
-    );
     pm25s.push(pm25Value);
   });
+  console.log(labels);
+  console.log(temps);
+  console.log(pm25s);
 
-  // วาดกราฟ Temperature
+  // วาดกราฟ Temperature (Bar Chart)
   new Chart(document.getElementById("chartTemp").getContext("2d"), {
     type: "line",
     data: {
-      labels: labels,
+      labels: labels, // labels ที่ได้จากฟังก์ชันหลังจากโหลดข้อมูล
       datasets: [
         {
           label: "Temperature (°C)",
-          data: temps,
-          borderColor: "orange",
-          backgroundColor: "rgba(255,165,0,0.3)",
-          tension: 0.4,
-          fill: true,
-          pointBackgroundColor: "white",
-          pointBorderColor: "orange",
+          data: temps, // ข้อมูลอุณหภูมิที่ได้จากการดึงข้อมูล
+          backgroundColor: "rgba(255, 77, 0, 0.6)", // ใช้สีเดียวกับกราฟ PM2.5
+          borderColor: "rgba(255, 77, 0, 0.6)", // ใช้ borderColor เดียวกัน
+          borderWidth: 4,
+          borderRadius: 8,
+          tension: 0.4, // ทำให้เส้นกราฟมีความโค้ง
+          pointBackgroundColor: "white", // สีของจุดบนกราฟ
           pointRadius: 5,
           pointHoverRadius: 7,
         },
@@ -166,23 +169,19 @@ function afterLoadForecast() {
     },
     options: {
       responsive: true,
-      maintainAspectRatio: true, // ทำให้กราฟยืดตามขนาดของ container
+      maintainAspectRatio: true,
       scales: {
         y: {
-          beginAtZero: false,
+          beginAtZero: true,
           grid: { color: "rgba(0,0,0,0.05)" },
           ticks: {
-            font: {
-              size: window.innerWidth < 600 ? 10 : 14, // ปรับขนาดฟอนต์ตามขนาดหน้าจอ
-            },
+            font: { size: window.innerWidth < 600 ? 10 : 14 },
           },
         },
         x: {
           grid: { display: false },
           ticks: {
-            font: {
-              size: window.innerWidth < 600 ? 10 : 14, // ปรับขนาดฟอนต์ตามขนาดหน้าจอ
-            },
+            font: { size: window.innerWidth < 600 ? 10 : 14 },
           },
         },
       },
@@ -194,7 +193,7 @@ function afterLoadForecast() {
           },
         },
         tooltip: {
-          backgroundColor: "rgba(255,165,0,0.9)",
+          backgroundColor: "rgba(0,123,255,0.9)", // ใช้สีเดียวกับ backgroundColor
           titleColor: "white",
           bodyColor: "white",
           cornerRadius: 6,
@@ -204,16 +203,16 @@ function afterLoadForecast() {
     },
   });
 
-  // วาดกราฟ PM2.5
+  // วาดกราฟ PM2.5 (Bar Chart)
   new Chart(document.getElementById("chartPM25").getContext("2d"), {
-    type: "bar",
+    type: "bar", // เป็น bar chart
     data: {
       labels: labels,
       datasets: [
         {
           label: "PM2.5 (µg/m³)",
           data: pm25s,
-          backgroundColor: "rgba(0,123,255,0.6)",
+          backgroundColor: "rgba(0,123,255,0.6)", // ใช้สีเดียวกันกับกราฟ Temperature
           borderColor: "rgba(0,123,255,1)",
           borderWidth: 1,
           borderRadius: 8,
@@ -222,14 +221,14 @@ function afterLoadForecast() {
     },
     options: {
       responsive: true,
-      maintainAspectRatio: true, // ทำให้กราฟยืดตามขนาดของ container
+      maintainAspectRatio: true,
       scales: {
         y: {
           beginAtZero: true,
           grid: { color: "rgba(0,0,0,0.05)" },
           ticks: {
             font: {
-              size: window.innerWidth < 600 ? 10 : 14, // ปรับขนาดฟอนต์ตามขนาดหน้าจอ
+              size: window.innerWidth < 600 ? 10 : 14,
             },
           },
         },
@@ -237,7 +236,7 @@ function afterLoadForecast() {
           grid: { display: false },
           ticks: {
             font: {
-              size: window.innerWidth < 600 ? 10 : 14, // ปรับขนาดฟอนต์ตามขนาดหน้าจอ
+              size: window.innerWidth < 600 ? 10 : 14,
             },
           },
         },
@@ -260,6 +259,7 @@ function afterLoadForecast() {
     },
   });
 }
+
 // --- เพิ่ม start() ---
 async function start() {
   await LoadForecast();
@@ -268,6 +268,7 @@ async function start() {
 
 // --- เรียก start() ตอนเริ่ม ---
 start();
+
 function formatNumber(value) {
   return typeof value === "number" ? value.toFixed(2) : "--";
 }
