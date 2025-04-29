@@ -1,3 +1,6 @@
+Youtube : https://youtu.be/mgNLTZ6yNVs
+
+!!! Important !!!
 Please put theese files in folder :
 
 backend/firebase_config.json
